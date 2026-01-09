@@ -6,8 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 
+inputdata = "data/Gridded_v_p_093000_improvPStats.npz"
+outputdata = "data/Gridded_v_p_093000_improvPStats_withPiD.npz"
 
-data = np.load("data/Gridded_v_p_093000_improvPStats.npz")
+data = np.load(inputdata)
 data = {k:v for k,v in data.items()}
 ks = list(data.keys())
 print(ks)
@@ -140,6 +142,12 @@ def Pressure_dilatation(v_jacobian, p):
 pidresult = PiD(v_jacobian.reshape((xlen*ylen*zlen,3,3)), ptensor.reshape((xlen*ylen*zlen,3,3))).reshape((xlen,ylen,zlen))
 strainresult = Pressure_strain(v_jacobian.reshape((xlen*ylen*zlen,3,3)), ptensor.reshape((xlen*ylen*zlen,3,3))).reshape((xlen,ylen,zlen))
 dilatationresult = Pressure_dilatation(v_jacobian.reshape((xlen*ylen*zlen,3,3)), 1/3.*np.trace(ptensor.reshape((xlen*ylen*zlen,3,3)), axis1=1,axis2=2)).reshape((xlen,ylen,zlen))
+
+data["PiD"] = pidresult
+data["PressureStrain"] = strainresult
+data["PressureDilatation"] = dilatationresult
+
+np.savez_compressed(outputdata, **data)
 
 import matplotlib.colors as colors
 from matplotlib import ticker
