@@ -16,12 +16,13 @@ print(ks)
 xlen = data['z'].shape[0]
 ylen = data['z'].shape[1]
 zlen = data['z'].shape[2]
-
+import sys
+# sys.exit()
 kernel_len = 3
 conv_order = 1
 kernel = np.ones([kernel_len, kernel_len,kernel_len])
 kernel = kernel/np.sum(kernel)
-
+z_bary = 1212183.05346265
 for var in ks[4:]:
     for i in range(conv_order):
         data[var] = sp.signal.convolve(data[var], kernel, mode="same", method="direct")
@@ -76,8 +77,8 @@ plt.close()
 
 #     plt.savefig(f"ptensor{i}{j}.png", dpi=300)
 #     plt.close()
-
-v_jacobian = np.stack((*np.gradient(data["vx"], 1e6),*np.gradient(data["vy"], 1e6),*np.gradient(data["vz"], 1e6)), axis = -1)
+dx = 5e5
+v_jacobian = np.stack((*np.gradient(data["vx"], dx),*np.gradient(data["vy"], dx),*np.gradient(data["vz"], dx)), axis = -1)
 v_jacobian = np.reshape(v_jacobian, [xlen,ylen,zlen, 3,3])
 # print(v_jacobian.shape)
 # for i in [0,1,2]:
